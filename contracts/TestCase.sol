@@ -1,24 +1,32 @@
-// SPDX-License-Identifer: UNLICENSED
-pragma solidity ^0.8.6;
+// Suggest to add TestCase into Question contract
 
-import "./ITestCase.sol";
+// // SPDX-License-Identifer: UNLICENSED
+// pragma solidity ^0.8.6;
 
-contract TestCase is ITestCase {
-    address payable public owner;
-    mapping(uint256 => address) prizePool;
-    mapping(uint256 => address) winner;
-    bytes32[] public testCases;
+// import "./ITestCase.sol";
 
-    constructor() {
-        owner = payable(msg.sender);
-    }
+// contract TestCase is ITestCase {
+//     struct TestCaseStruct {
+//         bytes32 input;
+//         bytes32 output;
+//     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Not owner");
-        _;
-    }
+//     address payable public owner;
+//     mapping(uint256 => address) prizePool;
+//     mapping(uint256 => address) winner;
+//     mapping(uint256 => TestCaseStruct) public testCases;
+//     uint256 public testCaseId;
 
-    function setTestCase(bytes32[] memory _testCases) external payable {
-        testCases = _testCases;
-    }
-}
+//     constructor() {
+//         owner = payable(msg.sender);
+//         testCaseId = 0;
+//     }
+
+//     modifier onlyOwner() {
+//         require(msg.sender == owner, "Not owner");
+//         _;
+//     }
+
+//     function addTestCase(bytes32[] memory _testCases) public payable {
+//     }
+// }

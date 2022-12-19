@@ -4,12 +4,21 @@ pragma solidity ^0.8.6;
 import "./IQuestion.sol";
 
 contract Question is IQuestion {
+    struct TestCase {
+        bytes32 input;
+        bytes32 output;
+    }
+
     address payable public owner;
-    bytes32 public description;
-    address public testCaseAddr;
+    string public description;
+    mapping(uint256 => address) prizePool;
+    mapping(uint256 => address) winner;
+    mapping(uint256 => TestCase) public testCases;
+    uint256 public testCaseId;
 
     constructor() {
         owner = payable(msg.sender);
+        testCaseId = 0;
     }
 
     modifier onlyOwner() {
@@ -17,21 +26,26 @@ contract Question is IQuestion {
         _;
     }
 
-    function setQuestion(bytes32 _description, address _testCaseAddr)
-        external
+    function setQuestion(string _description, address _testCaseAddr)
+        public
         payable
         onlyOwner
     {
         description = _description;
-        testCaseAddr = _testCaseAddr;
+    }
+
+    function addTestCase(bytes32 _input, bytes32 _output) public onlyOwner {
+        TestCase memory testCase = TestCase(_input, _output);
+        testCases[testCaseId] = testCase;
+        testCaseId++;
     }
 
     /*
-    function setDescription(bytes32 _description) external payable onlyOwner {
+    function setDescription(string _description) public payable onlyOwner {
         description = _description;
     }
 
-    function setTestCaseAddr(address _testCaseAddr) external payable onlyOwner {
+    function setTestCaseAddr(address _testCaseAddr) public payable onlyOwner {
         testCaseAddr = _testCaseAddr;
     }
     */
