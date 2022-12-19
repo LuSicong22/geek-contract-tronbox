@@ -13,7 +13,7 @@ contract Question is IQuestion {
     string public description;
     mapping(uint256 => address) prizePool;
     mapping(uint256 => address) winner;
-    mapping(uint256 => TestCase) public testCases;
+    TestCase[] public testCases;
     uint256 public testCaseId;
 
     constructor() {
@@ -26,11 +26,7 @@ contract Question is IQuestion {
         _;
     }
 
-    function setQuestion(string _description, address _testCaseAddr)
-        public
-        payable
-        onlyOwner
-    {
+    function setQuestion(string memory _description) public payable onlyOwner {
         description = _description;
     }
 

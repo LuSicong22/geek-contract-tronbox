@@ -2,7 +2,6 @@
 pragma solidity ^0.8.6;
 
 contract Verifier {
-
     struct TestCase {
         bytes32 input;
         bytes32 output;
@@ -30,15 +29,27 @@ contract Verifier {
         onlyOwner
         returns (bool)
     {
+        // Get contract address of the question that need to be verified
         address questionAddr = registeredQuestionList[_questionId];
-        (, bytes memory questionData) = questionAddr.call(
+
+        // Get the encodede testCase data
+        (, bytes memory testCaseData) = questionAddr.call(
             abi.encodeWithSignature("testCases()")
         );
-        mapping(uint256 => TestCase) storage testCases = abi.decode(questionData, (mapping));
-      
-        bytes memory payload = abi.encodeWithSignature("main()", "params");
-        (bool success, bytes memory answerData) = answerAddr.call(payload);
-        
+
+        // Decode the testCase data to get the test cases
+        TestCase[] memory testCases = abi.decode(testCaseData, (TestCase[]));
+
+        uint256 arrLength = testCases.length;
+
+        for (uint256 i = 0; i < arrLength; i++) {
+            bytes memory payload = abi.encodeWithSignature(
+                "main()",
+                testCases[i].input
+            );
+            (, bytes memory answerData) = answerAddr.call(payload);
+            require(testCases[i].output == abi.decode(answerData, (bytes32)));
+        }
     }
 
     function registerQuestion(address questionAddr) public payable {
