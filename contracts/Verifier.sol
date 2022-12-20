@@ -1,7 +1,11 @@
 // SPDX-License-Identifer: UNLICENSED
 pragma solidity ^0.8.6;
 
+import "https://github.com/Arachnid/solidity-stringutils/blob/master/src/strings.sol";
+
 contract Verifier {
+    using strings for *;
+
     struct TestCase {
         bytes32 input;
         bytes32 output;
@@ -45,11 +49,30 @@ contract Verifier {
         for (uint256 i = 0; i < arrLength; i++) {
             bytes memory payload = abi.encodeWithSignature(
                 "main()",
-                testCases[i].input
+                _parseTestCaseInput(testCases[i].input)
             );
             (, bytes memory answerData) = answerAddr.call(payload);
-            require(testCases[i].output == abi.decode(answerData, (bytes32)));
+            if (testCases[i].output != abi.decode(answerData, (bytes32))) {
+                return false;
+            }
         }
+        return true;
+    }
+
+    function _parseTestCaseInput(string _input)
+        private
+        view
+        returns (uint256[])
+    {
+        strings.slice memory stringSlice = _input.toSlice();
+        strings.slice memory delimeterSlice = ",".toSlice();
+        string[] memory strings = new string[](
+            stringSlice.count(delimeterSlice)
+        );
+        for (uint256 i = 0; i < strings.length; i++) {
+            strings[i] = stringSlice.split(delim).toString();
+        }
+        return strings;
     }
 
     function registerQuestion(address questionAddr) public payable {

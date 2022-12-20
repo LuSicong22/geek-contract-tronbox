@@ -1,12 +1,10 @@
-// SPDX-License-Identifer: UNLICENSED
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.6;
 
-import "./IQuestion.sol";
-
-contract Question is IQuestion {
+contract Question {
     struct TestCase {
-        bytes32 input;
-        bytes32 output;
+        uint256[] input;
+        uint256 output;
     }
 
     address payable public owner;
@@ -14,11 +12,9 @@ contract Question is IQuestion {
     mapping(uint256 => address) prizePool;
     mapping(uint256 => address) winner;
     TestCase[] public testCases;
-    uint256 public testCaseId;
 
     constructor() {
         owner = payable(msg.sender);
-        testCaseId = 0;
     }
 
     modifier onlyOwner() {
@@ -26,23 +22,19 @@ contract Question is IQuestion {
         _;
     }
 
-    function setQuestion(string memory _description) public payable onlyOwner {
+    function setDescription(string memory _description)
+        public
+        payable
+        onlyOwner
+    {
         description = _description;
     }
 
-    function addTestCase(bytes32 _input, bytes32 _output) public onlyOwner {
+    function addTestCase(uint256[] memory _input, uint256 _output)
+        public
+        onlyOwner
+    {
         TestCase memory testCase = TestCase(_input, _output);
-        testCases[testCaseId] = testCase;
-        testCaseId++;
+        testCases.push(testCase);
     }
-
-    /*
-    function setDescription(string _description) public payable onlyOwner {
-        description = _description;
-    }
-
-    function setTestCaseAddr(address _testCaseAddr) public payable onlyOwner {
-        testCaseAddr = _testCaseAddr;
-    }
-    */
 }
